@@ -3,6 +3,7 @@ import Webcam from 'react-webcam';
 import WebcamControls from './components/WebcamControls';
 import { dataURLToBlob } from 'blob-util';
 import WordList from './components/WordList';
+import './App.css';
 
 const App: React.FC = () => {
 	const webcamRef = useRef<Webcam | null>(null);
@@ -52,10 +53,15 @@ const App: React.FC = () => {
 	return (
 		<div className='App'>
 			{isWebcamActive ? (
-				<Webcam
-					audio={false}
-					ref={webcamRef}
-				/>
+				<>
+					<div className='webcam-container'>
+						<Webcam
+							audio={false}
+							ref={webcamRef}
+						/>
+						<div className='centered-square'></div>
+					</div>
+				</>
 			) : capturedImage ? (
 				<img
 					src={capturedImage}
