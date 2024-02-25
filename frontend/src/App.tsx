@@ -3,13 +3,14 @@ import Webcam from 'react-webcam';
 import WebcamControls from './components/WebcamControls';
 import Navbar from './components/Navbar';
 import { dataURLToBlob } from 'blob-util';
-import WordList from './components/WordList';
+import WordListComponent from './components/WordListComponent';
 import './App.css';
 
 const App: React.FC = () => {
 	const webcamRef = useRef<Webcam | null>(null);
 	const [isWebcamActive, setIsWebcamActive] = useState(false);
 	const [capturedImage, setCapturedImage] = useState<string | null>(null);
+	const [wordList, setWordList] = useState([]);
 
 	const handleStartWebcam = () => {
 		setIsWebcamActive(true);
@@ -43,6 +44,11 @@ const App: React.FC = () => {
 
 			if (response.ok) {
 				console.log('Image uploaded successfully!');
+
+				const json = await response.json();
+				if (json.ok) {
+					setWordList(json.data);
+				}
 			} else {
 				console.error('Upload failed:', response.statusText);
 			}
@@ -53,7 +59,7 @@ const App: React.FC = () => {
 
 	return (
 		<div className='App'>
-			<Navbar title="grid gurus" />
+			<Navbar title='grid gurus' />
 			{isWebcamActive ? (
 				<>
 					<div className='webcam-container'>
@@ -79,7 +85,7 @@ const App: React.FC = () => {
 				isCaptureDisabled={!isWebcamActive}
 				isUploadDisabled={!capturedImage}
 			/>
-			<WordList />
+			{wordList && <WordListComponent wordList={wordList} />}
 		</div>
 	);
 };

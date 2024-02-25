@@ -52,7 +52,7 @@ def upload_image():
         with open(filepath) as file:
             return [word.strip().lower() for word in file]
 
-    word_list = load_word_list(r'backend\src\Collins_Scrabble_Words_2019.txt')
+    word_list = load_word_list(r'backend\src\word.txt')
 
     def build_trie(word_list):
         trie = Trie()
