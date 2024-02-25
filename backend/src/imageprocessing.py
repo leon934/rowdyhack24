@@ -80,14 +80,15 @@ def create_grid(image):
         line.strip()
         arr.append(line.split(" "))
 
-        print(line)
+    new_arr = [[x[:-1] for x in row] for row in arr]
 
-        new_arr = [[x[:-1] for x in row] for row in arr]
+    new_arr = np.delete(arr, -1, axis=1)
+    array = np.array(new_arr)
+    array[array == "#"] = " "
+    
+    grid = array.tolist()
 
-# Using numpy
-        new_arr = np.delete(arr, -1, axis=1)
-
-    return new_arr
+    return grid
 
 def clear_black_bars(image, ratio, height, width):
     n = 6

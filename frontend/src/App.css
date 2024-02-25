@@ -4,6 +4,9 @@
 	font-family: "Roboto";
 }
 
+.Navbar {
+	font-size: 40px;
+}
 
 .App {
 	display: flex;
