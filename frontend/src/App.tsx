@@ -34,7 +34,7 @@ const App: React.FC = () => {
 
 		// TODO: change backend url
 		try {
-			const response = await fetch('http://localhost:3000/upload', {
+			const response = await fetch('http://localhost:5000/upload', {
 				method: 'POST',
 				body: formData,
 			});
