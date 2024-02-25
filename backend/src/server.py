@@ -2,6 +2,9 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
+from Trie import Trie
+from mapper import *
+from solver import *
 
 from imageprocessing import *
 
@@ -42,9 +45,32 @@ def upload_image():
     inv_img = invert_color(img)
     arr = create_grid(inv_img)
 
-    vertical_matrix, horizontal_matrix, single_matrix = create_matrix(arr)
+    verticals, horizontals, singles = create_matrix(arr)
 
     # TODO: find all possible words with letters
+    def load_word_list(filepath):
+        with open(filepath) as file:
+            return [word.strip().lower() for word in file]
+
+    word_list = load_word_list(r'backend\src\Collins_Scrabble_Words_2019.txt')
+
+    def build_trie(word_list):
+        trie = Trie()
+        for word in word_list:
+            trie.insert(word)
+        return trie
+        
+    trie = build_trie(word_list)
+    
+    h_map = get_h_map(verticals, horizontals, singles)
+    v_map = get_v_map(verticals, horizontals, singles)
+
+    permutations = solve_recursive_permutations(h_map, trie) + solve_recursive_permutations(v_map, trie)
+    unique_list = list(set(permutations))
+    sorted_list = sorted(unique_list, key=len, reverse=True)
+
+    return jsonify(success=True, data=sorted_list), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
