@@ -59,7 +59,7 @@ const App: React.FC = () => {
 
 	return (
 		<div className='App'>
-			<Navbar title='grid gurus' />
+			<Navbar title='Grid Guru' />
 			{isWebcamActive ? (
 				<>
 					<div className='webcam-container'>

@@ -40,10 +40,6 @@ def create_grid(image):
             # image_slice = cv2.copyMakeBorder(image_slice, 50,50,50,50, cv2.BORDER_CONSTANT, value=255)
             # image_slice = cv2.resize(image_slice, dsize=(300, 300))
 
-            # Not required; used for testing purposes.
-            filename = f'C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/image_processing/squares/{counter}.png'
-            cv2.imwrite(filename, image_slice)
-
             # Accounts for false positives by finding the black pixel to white pixel ratio.
             # black_pixel_ratio = (np.count_nonzero(image_slice == 0)) / (47 * 47) * 100
 
@@ -52,12 +48,10 @@ def create_grid(image):
             image_slice = clear_black_bars(image_slice, inner_black_pixel_ratio, img_height, img_width)
 
             # Converts the image into a string and cleans it up.
-            value = pytesseract.image_to_string(filename, config=r'--psm 7')
+            value = pytesseract.image_to_string(image_slice, config=r'--psm 7')
             value = value.strip()
 
             # print(f'{value} BPR: {black_pixel_ratio}; IBPR: {inner_black_pixel_ratio}; WIDTH: {img_width}; HEIGHT: {img_height}; LEFT COUNT: {np.count_nonzero(image_slice[0:img_height, 6:7] == 0)}; BOTTOM COUNT: {np.count_nonzero(image_slice[img_height - 7:img_height - 7 + 1, 0:width] == 0)}; RIGHT COUNT: {np.count_nonzero(image_slice[0:img_height, img_width - 7:img_width - 6] == 0)}')
-
-
 
             if value and inner_black_pixel_ratio < 80:
                 if len(value) >= 2: # stupid edge case
@@ -80,14 +74,15 @@ def create_grid(image):
         line.strip()
         arr.append(line.split(" "))
 
-        print(line)
+    new_arr = [[x[:-1] for x in row] for row in arr]
 
-        new_arr = [[x[:-1] for x in row] for row in arr]
+    new_arr = np.delete(arr, -1, axis=1)
+    array = np.array(new_arr)
+    array[array == "#"] = " "
+    
+    grid = array.tolist()
 
-# Using numpy
-        new_arr = np.delete(arr, -1, axis=1)
-
-    return new_arr
+    return grid
 
 def clear_black_bars(image, ratio, height, width):
     n = 6
@@ -160,18 +155,6 @@ def create_matrix(board):
                 vert_matrix.append(current_value + below_value)
 
     return vert_matrix, horizontal_matrix, single_matrix
-
-board = [
-    ['E', 'C', ' ', ' ', 'G', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', 'I', ' ', 'E', ' '],
-    [' ', 'I', 'H', ' ', ' ', ' ', ' ', 'F'],
-    ['H', ' ', ' ', ' ', 'F', ' ', ' ', ' '],
-    ['D', ' ', ' ', 'H', ' ', 'C', ' ', ' '],
-    [' ', ' ', ' ', ' ', 'B', ' ', ' ', ' '],
-    [' ', 'F', ' ', ' ', ' ', ' ', 'B', 'H'],
-    [' ', ' ', ' ', ' ', 'A', ' ', ' ', ' '],
-    [' ', ' ', ' ', ' ', 'H', ' ', ' ', 'G']
-]
 
 def board_capture(image):
     return image[90:400, 170:465]
