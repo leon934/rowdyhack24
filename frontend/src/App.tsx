@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import Webcam from 'react-webcam';
-import WebcamControls from './WebcamControls';
+import WebcamControls from './components/WebcamControls';
 import { dataURLToBlob } from 'blob-util';
+import WordList from './components/WordList';
 
 const App: React.FC = () => {
 	const webcamRef = useRef<Webcam | null>(null);
@@ -70,6 +71,7 @@ const App: React.FC = () => {
 				isCaptureDisabled={!isWebcamActive}
 				isUploadDisabled={!capturedImage}
 			/>
+			<WordList />
 		</div>
 	);
 };
