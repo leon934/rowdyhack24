@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 
+import imageprocessing
+
 app = Flask(__name__)
 CORS(app)
 UPLOAD_FOLDER = 'src/uploads'  # Create an 'uploads' folder where images will be saved

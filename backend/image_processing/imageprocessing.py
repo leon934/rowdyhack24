@@ -8,7 +8,7 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 
 img = cv2.imread('C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/image_processing/testing/test_cases/testcase2.jpg')
 
-def invert_color(image): # Makes the board parseable by create_grid function below.
+def invert_color(image): # Makes the board parseable for create_board_matrix to go through.
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3,3), 0)
     thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
@@ -18,47 +18,38 @@ def invert_color(image): # Makes the board parseable by create_grid function bel
 
     return invert
 
-def create_grid(image):
+def create_board_matrix(image):
     height, width = image.shape
     counter = 1
     square_height = round(height / 9)
     square_width = round(width / 8)
 
     for i in range(9):
-        line = ''
         for j in range(8):
             image_slice = image[square_height * i:square_height * (i + 1), square_width * j:square_width * (j + 1)]
             img_height, img_width = image_slice.shape
 
+            # Creates a border to prevent extraneous letters from being generated.
             image_slice[0:img_height, 0:6] = 255
             image_slice[0:6, 0:img_width] = 255
             image_slice[0:img_height, img_width - 6:img_width] = 255
             image_slice[img_height - 6:img_height, 0:img_width] = 255
-            
-            # image_slice = cv2.copyMakeBorder(image_slice, 50,50,50,50, cv2.BORDER_CONSTANT, value=255)
-            # image_slice = cv2.resize(image_slice, dsize=(300, 300))
-
-            # Not required; used for testing purposes.
-            filename = f'C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/image_processing/squares/{counter}.png'
-            cv2.imwrite(filename, image_slice)
 
             # Accounts for false positives by finding the black pixel to white pixel ratio.
-            # black_pixel_ratio = (np.count_nonzero(image_slice == 0)) / (47 * 47) * 100
-
             inner_black_pixel_ratio = (np.count_nonzero(image_slice[6:img_height - 6, 6:img_width - 6] == 0)) / (35 * 35) * 100
 
+            # Clears black bars on the side that might interfere with tesseract.
             image_slice = clear_black_bars(image_slice, inner_black_pixel_ratio, img_height, img_width)
 
             # Converts the image into a string and cleans it up.
-            value = pytesseract.image_to_string(filename, config=r'--psm 7')
+            value = pytesseract.image_to_string(image_slice, config=r'--psm 7')
             value = value.strip()
 
+            # Used for debugging.
             # print(f'{value} BPR: {black_pixel_ratio}; IBPR: {inner_black_pixel_ratio}; WIDTH: {img_width}; HEIGHT: {img_height}; LEFT COUNT: {np.count_nonzero(image_slice[0:img_height, 6:7] == 0)}; BOTTOM COUNT: {np.count_nonzero(image_slice[img_height - 7:img_height - 7 + 1, 0:width] == 0)}; RIGHT COUNT: {np.count_nonzero(image_slice[0:img_height, img_width - 7:img_width - 6] == 0)}')
 
-
-
             if value and inner_black_pixel_ratio < 80:
-                if len(value) >= 2: # stupid edge case
+                if len(value) >= 2: # Deals with edge cases in case they turn out random.
                     value = value[0]
 
                 value = value.upper()
@@ -68,15 +59,10 @@ def create_grid(image):
 
                 arr[i][j] = value
 
-                line += value + " "
-            else: # Used for testing purposes.
-                value = '#'
-                line += value + " "
-                
             value = ''
             counter += 1
-        
-        print(line)
+
+    return arr
 
 def clear_black_bars(image, ratio, height, width):
     n = 6
@@ -133,9 +119,17 @@ def clear_black_bars(image, ratio, height, width):
 def test_image(image):
     cv2.imwrite('C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/image_processing/testing/test_result/testresult2.jpg', image)
 
-img = invert_color(img)
-create_grid(img)
-test_image(img)
+def create_matrix(board):
+    vert_matrix, horizontal_matrix, single_matrix = [], [], []
 
-# print(pytesseract.image_to_string('./squares/65.png', config=r'--psm 10'))
-# print(pytesseract.image_to_string('./squares/8.png'))
+    # Check each value below the current index.
+
+    for i in range(9):
+        for j in range(8):
+            if board[i][j]:
+                if(i == 8):
+                    # only look right
+                if(j == 7):
+                    
+
+    return (vert_matrix, horizontal_matrix, single_matrix)
