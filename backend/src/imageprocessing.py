@@ -140,10 +140,6 @@ def clear_black_bars(image, ratio, height, width):
 
     return image
     
-
-def test_image(image):
-    cv2.imwrite('C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/image_processing/testing/test_result/testresult2.jpg', image)
-
 def create_matrix(board):
     vert_matrix, horizontal_matrix, single_matrix = [], [], []
 
@@ -177,9 +173,5 @@ board = [
     [' ', ' ', ' ', ' ', 'H', ' ', ' ', 'G']
 ]
 
-vert, horiz, single = create_matrix(board)
-print("Vertical Matrix:", vert)
-print("Horizontal Matrix:", horiz)
-print("Single Matrix:", single)
-
-
+def board_capture(image):
+    return image[90:400, 170:465]

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Webcam from 'react-webcam';
 import WebcamControls from './components/WebcamControls';
+import Navbar from './components/Navbar';
 import { dataURLToBlob } from 'blob-util';
 import WordList from './components/WordList';
 import './App.css';
@@ -52,6 +53,7 @@ const App: React.FC = () => {
 
 	return (
 		<div className='App'>
+			<Navbar title="grid gurus" />
 			{isWebcamActive ? (
 				<>
 					<div className='webcam-container'>

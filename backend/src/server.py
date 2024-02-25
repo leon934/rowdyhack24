@@ -3,7 +3,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 
-import imageprocessing
+from imageprocessing import *
+
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 app = Flask(__name__)
 CORS(app)
@@ -30,11 +32,18 @@ def upload_image():
     try:
         img = Image.open(filepath)
         img.save(filepath, format='PNG')
-        return jsonify({'message': 'Image uploaded and converted to PNG'}), 200
     except Exception as e:
         return jsonify({'error': 'Image conversion failed'}), 500
     
     # TODO: feed image to model and letters
+
+    img = cv2.imread('C:/Users/leonl/Documents/GitHub/rowdyhack24/backend/src/uploads/image.png')
+    img = board_capture(img)
+    inv_img = invert_color(img)
+    arr = create_grid(inv_img)
+
+    vertical_matrix, horizontal_matrix, single_matrix = create_matrix(arr)
+
     # TODO: find all possible words with letters
 
 if __name__ == '__main__':
